@@ -40,41 +40,199 @@ export default function Home() {
   };
 
   return (
-    <main style={{ padding: 20, fontFamily: "Arial" }}>
-      <h1 style={{ fontSize: 24 }}>Trade Calculator</h1>
-      <div style={{ display: "flex", flexDirection: "column", gap: 10, maxWidth: 400 }}>
-        <label>Capital ($):</label>
-        <input type="number" value={capital} onChange={(e) => setCapital(Number(e.target.value))} />
+    <main
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        backgroundColor: "#f0f4f8",
+        fontFamily: "'Roboto', sans-serif",
+        padding: 20,
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 500,
+          width: "100%",
+          backgroundColor: "#ffffff",
+          borderRadius: 12,
+          padding: 30,
+          boxShadow: "0 10px 20px rgba(0, 0, 0, 0.1)",
+          transition: "all 0.3s ease-in-out",
+          transform: result ? "scale(1.05)" : "scale(1)",
+        }}
+      >
+        <h1
+          style={{
+            fontSize: 28,
+            textAlign: "center",
+            color: "#333",
+            marginBottom: 30,
+            fontWeight: "bold",
+            letterSpacing: "0.5px",
+          }}
+        >
+          Trade Calculator
+        </h1>
 
-        <label>Risk (%):</label>
-        <input type="number" value={risk} onChange={(e) => setRisk(Number(e.target.value))} />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 20,
+          }}
+        >
+          <label style={{ fontSize: 16, color: "#666" }}>Capital ($):</label>
+          <input
+            type="number"
+            value={capital}
+            onChange={(e) => setCapital(Number(e.target.value))}
+            style={{
+              padding: "10px 15px",
+              borderRadius: 8,
+              border: "1px solid #ddd",
+              fontSize: 16,
+              outline: "none",
+              transition: "border 0.3s ease-in-out",
+            }}
+            onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
+            onBlur={(e) => e.target.style.border = "1px solid #ddd"}
+          />
 
-        <label>Entry Price:</label>
-        <input type="number" value={entryPrice} onChange={(e) => setEntryPrice(Number(e.target.value))} />
+          <label style={{ fontSize: 16, color: "#666" }}>Risk (%):</label>
+          <input
+            type="number"
+            value={risk}
+            onChange={(e) => setRisk(Number(e.target.value))}
+            style={{
+              padding: "10px 15px",
+              borderRadius: 8,
+              border: "1px solid #ddd",
+              fontSize: 16,
+              outline: "none",
+              transition: "border 0.3s ease-in-out",
+            }}
+            onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
+            onBlur={(e) => e.target.style.border = "1px solid #ddd"}
+          />
 
-        <label>Target Price:</label>
-        <input type="number" value={targetPrice} onChange={(e) => setTargetPrice(Number(e.target.value))} />
+          <label style={{ fontSize: 16, color: "#666" }}>Entry Price:</label>
+          <input
+            type="number"
+            value={entryPrice}
+            onChange={(e) => setEntryPrice(Number(e.target.value))}
+            style={{
+              padding: "10px 15px",
+              borderRadius: 8,
+              border: "1px solid #ddd",
+              fontSize: 16,
+              outline: "none",
+              transition: "border 0.3s ease-in-out",
+            }}
+            onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
+            onBlur={(e) => e.target.style.border = "1px solid #ddd"}
+          />
 
-        <label>Stop Loss Price:</label>
-        <input type="number" value={stopLossPrice} onChange={(e) => setStopLossPrice(Number(e.target.value))} />
+          <label style={{ fontSize: 16, color: "#666" }}>Target Price:</label>
+          <input
+            type="number"
+            value={targetPrice}
+            onChange={(e) => setTargetPrice(Number(e.target.value))}
+            style={{
+              padding: "10px 15px",
+              borderRadius: 8,
+              border: "1px solid #ddd",
+              fontSize: 16,
+              outline: "none",
+              transition: "border 0.3s ease-in-out",
+            }}
+            onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
+            onBlur={(e) => e.target.style.border = "1px solid #ddd"}
+          />
 
-        <label>Position Type:</label>
-        <select value={positionType} onChange={(e) => setPositionType(e.target.value)}>
-          <option value="long">Long</option>
-          <option value="short">Short</option>
-        </select>
+          <label style={{ fontSize: 16, color: "#666" }}>Stop Loss Price:</label>
+          <input
+            type="number"
+            value={stopLossPrice}
+            onChange={(e) => setStopLossPrice(Number(e.target.value))}
+            style={{
+              padding: "10px 15px",
+              borderRadius: 8,
+              border: "1px solid #ddd",
+              fontSize: 16,
+              outline: "none",
+              transition: "border 0.3s ease-in-out",
+            }}
+            onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
+            onBlur={(e) => e.target.style.border = "1px solid #ddd"}
+          />
 
-        <button onClick={calculate} style={{ marginTop: 10, padding: 10 }}>Calculate</button>
+          <label style={{ fontSize: 16, color: "#666" }}>Position Type:</label>
+          <select
+            value={positionType}
+            onChange={(e) => setPositionType(e.target.value)}
+            style={{
+              padding: "10px 15px",
+              borderRadius: 8,
+              border: "1px solid #ddd",
+              fontSize: 16,
+              outline: "none",
+              backgroundColor: "#fff",
+              transition: "border 0.3s ease-in-out",
+            }}
+          >
+            <option value="long">Long</option>
+            <option value="short">Short</option>
+          </select>
 
-        {result && (
-          <div style={{ marginTop: 20 }}>
-            <p>Risk Amount: ${result.riskAmount.toFixed(2)}</p>
-            <p>Position Size: {result.positionSize.toFixed(2)}</p>
-            <p>Position Value: ${result.positionValue.toFixed(2)}</p>
-            <p>PNL: ${result.pnl.toFixed(2)}</p>
-            <p>Leverage: x{result.leverage.toFixed(2)}</p>
-          </div>
-        )}
+          <button
+            onClick={calculate}
+            style={{
+              marginTop: 20,
+              padding: "12px 20px",
+              backgroundColor: "#4CAF50",
+              color: "#fff",
+              border: "none",
+              borderRadius: 8,
+              fontSize: 18,
+              cursor: "pointer",
+              transition: "all 0.3s ease-in-out",
+            }}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#45a049"}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#4CAF50"}
+          >
+            Calculate
+          </button>
+
+          {result && (
+            <div
+              style={{
+                marginTop: 30,
+                padding: 20,
+                backgroundColor: "#f4f4f9",
+                borderRadius: 8,
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+              }}
+            >
+              <p style={{ color: "#333", fontSize: 16 }}>
+                <strong>Risk Amount:</strong> ${result.riskAmount.toFixed(2)}
+              </p>
+              <p style={{ color: "#333", fontSize: 16 }}>
+                <strong>Position Size:</strong> {result.positionSize.toFixed(2)}
+              </p>
+              <p style={{ color: "#333", fontSize: 16 }}>
+                <strong>Position Value:</strong> ${result.positionValue.toFixed(2)}
+              </p>
+              <p style={{ color: "#333", fontSize: 16 }}>
+                <strong>PNL:</strong> ${result.pnl.toFixed(2)}
+              </p>
+              <p style={{ color: "#333", fontSize: 16 }}>
+                <strong>Leverage:</strong> x{result.leverage.toFixed(2)}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </main>
   );
