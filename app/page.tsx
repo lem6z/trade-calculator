@@ -109,6 +109,7 @@ export default function Home() {
               fontSize: 16,
               outline: "none",
               transition: "border 0.3s ease-in-out",
+              color: "#000", // Texte en noir
             }}
             onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
             onBlur={(e) => e.target.style.border = "1px solid #ddd"}
@@ -126,6 +127,7 @@ export default function Home() {
               fontSize: 16,
               outline: "none",
               transition: "border 0.3s ease-in-out",
+              color: "#000", // Texte en noir
             }}
             onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
             onBlur={(e) => e.target.style.border = "1px solid #ddd"}
@@ -143,6 +145,7 @@ export default function Home() {
               fontSize: 16,
               outline: "none",
               transition: "border 0.3s ease-in-out",
+              color: "#000", // Texte en noir
             }}
             onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
             onBlur={(e) => e.target.style.border = "1px solid #ddd"}
@@ -160,6 +163,7 @@ export default function Home() {
               fontSize: 16,
               outline: "none",
               transition: "border 0.3s ease-in-out",
+              color: "#000", // Texte en noir
             }}
             onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
             onBlur={(e) => e.target.style.border = "1px solid #ddd"}
@@ -177,6 +181,7 @@ export default function Home() {
               fontSize: 16,
               outline: "none",
               transition: "border 0.3s ease-in-out",
+              color: "#000", // Texte en noir
             }}
             onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
             onBlur={(e) => e.target.style.border = "1px solid #ddd"}
@@ -194,6 +199,7 @@ export default function Home() {
               outline: "none",
               backgroundColor: "#fff",
               transition: "border 0.3s ease-in-out",
+              color: "#000", // Texte en noir
             }}
           >
             <option
@@ -222,6 +228,7 @@ export default function Home() {
               fontSize: 16,
               outline: "none",
               transition: "border 0.3s ease-in-out",
+              color: "#000", // Texte en noir
             }}
             onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
             onBlur={(e) => e.target.style.border = "1px solid #ddd"}
