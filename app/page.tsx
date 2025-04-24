@@ -293,7 +293,7 @@ export default function Home() {
               style={{
                 marginTop: 30,
                 padding: 20,
-                backgroundColor: isNightMode ? "#333" : "#f4f4f9",
+                backgroundColor: isNightMode ? "#333" : "#f4f4f9", // Fond plus foncé en mode nuit
                 borderRadius: 8,
                 boxShadow: isNightMode ? "0 4px 8px rgba(255, 255, 255, 0.1)" : "0 4px 8px rgba(0, 0, 0, 0.1)",
               }}
@@ -344,6 +344,6 @@ const labelStyle = {
 };
 
 const resultTextStyle = {
-  color: "#333",
+  color: "#ffffff", // Texte blanc en mode nuit
   fontSize: 16,
 };
