@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { FaSun, FaMoon } from "react-icons/fa"; // Icônes soleil et lune
 
 export default function Home() {
   const [capital, setCapital] = useState(1000);
@@ -107,8 +108,27 @@ export default function Home() {
           boxShadow: isNightMode ? "0 10px 20px rgba(255, 255, 255, 0.1)" : "0 10px 20px rgba(0, 0, 0, 0.1)",
           transition: "all 0.3s ease-in-out",
           transform: result ? "scale(1.05)" : "scale(1)",
+          position: "relative", // Pour le bouton de bascule
         }}
       >
+        {/* Bouton pour basculer le mode */}
+        <button
+          onClick={toggleNightMode}
+          style={{
+            position: "absolute",
+            top: 20,
+            right: 20,
+            backgroundColor: "transparent",
+            border: "none",
+            cursor: "pointer",
+            fontSize: 30,
+            color: isNightMode ? "#fff" : "#000",
+            transition: "all 0.3s ease-in-out",
+          }}
+        >
+          {isNightMode ? <FaSun /> : <FaMoon />}
+        </button>
+
         <h1
           style={{
             fontSize: 28,
@@ -171,7 +191,7 @@ export default function Home() {
                 onClick={() => removeTargetPrice(index)}
                 style={{
                   marginTop: 10,
-                  padding: "10px 20px",
+                  padding: "12px 20px",
                   backgroundColor: "#f44336",
                   color: "#fff",
                   border: "none",
@@ -250,7 +270,7 @@ export default function Home() {
               transition: "all 0.3s ease-in-out",
             }}
           >
-            Calculate
+            Calculer
           </button>
 
           {result && (
@@ -287,24 +307,6 @@ export default function Home() {
             </div>
           )}
         </div>
-
-        {/* Bouton de mode nuit */}
-        <button
-          onClick={toggleNightMode}
-          style={{
-            marginTop: 20,
-            padding: "10px 20px",
-            backgroundColor: "#2196F3",
-            color: "#fff",
-            border: "none",
-            borderRadius: 8,
-            fontSize: 18,
-            cursor: "pointer",
-            transition: "all 0.3s ease-in-out",
-          }}
-        >
-          {isNightMode ? "Mode Jour" : "Mode Nuit"}
-        </button>
       </div>
     </main>
   );
