@@ -30,12 +30,17 @@ export default function Home() {
         : positionSize * (entry - target);
     const leverage = positionValue / capital;
 
+    // Calcul du ratio Reward/Risk (RR)
+    const potentialProfit = positionType === "long" ? target - entry : entry - target;
+    const rr = potentialProfit / diff;
+
     setResult({
       riskAmount,
       positionSize,
       positionValue,
       pnl,
-      leverage,
+      leverage: leverage.toFixed(2), // Arrondi de l'effet de levier
+      rr: rr.toFixed(2), // Arrondi du RR
     });
   };
 
@@ -95,6 +100,7 @@ export default function Home() {
               fontSize: 16,
               outline: "none",
               transition: "border 0.3s ease-in-out",
+              color: "#000", // Couleur du texte en noir
             }}
             onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
             onBlur={(e) => e.target.style.border = "1px solid #ddd"}
@@ -112,6 +118,7 @@ export default function Home() {
               fontSize: 16,
               outline: "none",
               transition: "border 0.3s ease-in-out",
+              color: "#000", // Couleur du texte en noir
             }}
             onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
             onBlur={(e) => e.target.style.border = "1px solid #ddd"}
@@ -129,6 +136,7 @@ export default function Home() {
               fontSize: 16,
               outline: "none",
               transition: "border 0.3s ease-in-out",
+              color: "#000", // Couleur du texte en noir
             }}
             onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
             onBlur={(e) => e.target.style.border = "1px solid #ddd"}
@@ -146,6 +154,7 @@ export default function Home() {
               fontSize: 16,
               outline: "none",
               transition: "border 0.3s ease-in-out",
+              color: "#000", // Couleur du texte en noir
             }}
             onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
             onBlur={(e) => e.target.style.border = "1px solid #ddd"}
@@ -163,6 +172,7 @@ export default function Home() {
               fontSize: 16,
               outline: "none",
               transition: "border 0.3s ease-in-out",
+              color: "#000", // Couleur du texte en noir
             }}
             onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
             onBlur={(e) => e.target.style.border = "1px solid #ddd"}
@@ -228,7 +238,10 @@ export default function Home() {
                 <strong>PNL:</strong> ${result.pnl.toFixed(2)}
               </p>
               <p style={{ color: "#333", fontSize: 16 }}>
-                <strong>Leverage:</strong> x{result.leverage.toFixed(2)}
+                <strong>Leverage:</strong> x{result.leverage}
+              </p>
+              <p style={{ color: "#333", fontSize: 16 }}>
+                <strong>Risk/Reward Ratio:</strong> {result.rr}
               </p>
             </div>
           )}
