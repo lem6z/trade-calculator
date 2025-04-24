@@ -1,149 +1,81 @@
-'use client'; // Directive pour spécifier que ce fichier utilise des hooks Re
-// pages/index.tsx
+"use client";
+
 import { useState } from "react";
 
 export default function Home() {
-  const [capital, setCapital] = useState(100);
-  const [risk, setRisk] = useState(3);
-  const [marginMax, setMarginMax] = useState(20);
-  const [entry, setEntry] = useState(94000);
-  const [sl, setSL] = useState(91000);
-  const [tp, setTP] = useState(98000);
+  const [capital, setCapital] = useState(1000);
+  const [risk, setRisk] = useState(1);
+  const [entryPrice, setEntryPrice] = useState(100);
+  const [targetPrice, setTargetPrice] = useState(110);
+  const [stopLossPrice, setStopLossPrice] = useState(95);
   const [positionType, setPositionType] = useState("long");
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState<any>(null);
 
   const calculate = () => {
     const riskAmount = (capital * risk) / 100;
-    const isLong = positionType === "long";
-    const stopDistance = isLong ? entry - sl : sl - entry;
-    const targetDistance = isLong ? tp - entry : entry - tp;
+    const entry = parseFloat(entryPrice.toString());
+    const target = parseFloat(targetPrice.toString());
+    const stop = parseFloat(stopLossPrice.toString());
 
-    if (stopDistance <= 0) {
-      alert("Le stop loss n'est pas logique pour cette position.");
-      return;
-    }
+    const diff =
+      positionType === "long"
+        ? Math.abs(entry - stop)
+        : Math.abs(stop - entry);
 
-    const positionSize = riskAmount / stopDistance;
+    const positionSize = riskAmount / diff;
     const positionValue = positionSize * entry;
-    const leverage = positionValue / marginMax;
-    const pnl = targetDistance * positionSize;
-    const rr = pnl / riskAmount;
+    const pnl =
+      positionType === "long"
+        ? positionSize * (target - entry)
+        : positionSize * (entry - target);
+    const leverage = positionValue / capital;
 
     setResult({
-      capital,
       riskAmount,
       positionSize,
       positionValue,
-      leverage,
       pnl,
-      rr,
-      maxTrades: Math.floor(capital / marginMax),
+      leverage,
     });
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-6">
-      <div className="w-full max-w-lg bg-gray-800 shadow-2xl rounded-2xl p-6">
-        <h2 className="text-2xl font-bold text-center mb-6">📊 Calculateur de Trade</h2>
-        <div className="space-y-4">
-          <div>
-            <label className="block">💰 Capital ($)</label>
-            <input
-              type="number"
-              value={capital}
-              onChange={(e) => setCapital(+e.target.value)}
-              className="w-full p-2 mt-1 bg-gray-700 rounded"
-            />
-          </div>
-          <div>
-            <label className="block">⚠️ Risque (%)</label>
-            <input
-              type="number"
-              value={risk}
-              onChange={(e) => setRisk(+e.target.value)}
-              className="w-full p-2 mt-1 bg-gray-700 rounded"
-            />
-          </div>
-          <div>
-            <label className="block">📊 Marge max / trade ($)</label>
-            <input
-              type="number"
-              value={marginMax}
-              onChange={(e) => setMarginMax(+e.target.value)}
-              className="w-full p-2 mt-1 bg-gray-700 rounded"
-            />
-          </div>
-          <div>
-            <label className="block">📈 Prix d'achat</label>
-            <input
-              type="number"
-              value={entry}
-              onChange={(e) => setEntry(+e.target.value)}
-              className="w-full p-2 mt-1 bg-gray-700 rounded"
-            />
-          </div>
-          <div>
-            <label className="block">🛑 Stop Loss</label>
-            <input
-              type="number"
-              value={sl}
-              onChange={(e) => setSL(+e.target.value)}
-              className="w-full p-2 mt-1 bg-gray-700 rounded"
-            />
-          </div>
-          <div>
-            <label className="block">🎯 Take Profit</label>
-            <input
-              type="number"
-              value={tp}
-              onChange={(e) => setTP(+e.target.value)}
-              className="w-full p-2 mt-1 bg-gray-700 rounded"
-            />
-          </div>
-        </div>
+    <main style={{ padding: 20, fontFamily: "Arial" }}>
+      <h1 style={{ fontSize: 24 }}>Trade Calculator</h1>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, maxWidth: 400 }}>
+        <label>Capital ($):</label>
+        <input type="number" value={capital} onChange={(e) => setCapital(Number(e.target.value))} />
 
-        <div className="pt-4">
-          <label className="block">⚖️ Type de position</label>
-          <div className="flex gap-4 pt-2">
-            <button
-              onClick={() => setPositionType("long")}
-              className={`${
-                positionType === "long" ? "bg-blue-500" : "bg-gray-700"
-              } px-4 py-2 rounded`}
-            >
-              Long
-            </button>
-            <button
-              onClick={() => setPositionType("short")}
-              className={`${
-                positionType === "short" ? "bg-red-500" : "bg-gray-700"
-              } px-4 py-2 rounded`}
-            >
-              Short
-            </button>
-          </div>
-        </div>
+        <label>Risk (%):</label>
+        <input type="number" value={risk} onChange={(e) => setRisk(Number(e.target.value))} />
 
-        <button
-          onClick={calculate}
-          className="w-full mt-4 py-2 bg-green-500 rounded-lg text-white"
-        >
-          Calculer
-        </button>
+        <label>Entry Price:</label>
+        <input type="number" value={entryPrice} onChange={(e) => setEntryPrice(Number(e.target.value))} />
+
+        <label>Target Price:</label>
+        <input type="number" value={targetPrice} onChange={(e) => setTargetPrice(Number(e.target.value))} />
+
+        <label>Stop Loss Price:</label>
+        <input type="number" value={stopLossPrice} onChange={(e) => setStopLossPrice(Number(e.target.value))} />
+
+        <label>Position Type:</label>
+        <select value={positionType} onChange={(e) => setPositionType(e.target.value)}>
+          <option value="long">Long</option>
+          <option value="short">Short</option>
+        </select>
+
+        <button onClick={calculate} style={{ marginTop: 10, padding: 10 }}>Calculate</button>
 
         {result && (
-          <div className="pt-4 border-t border-white/10 mt-6 space-y-2 text-sm">
-            <p>💼 Capital total : {result.capital.toFixed(2)} $</p>
-            <p>📉 Risque par trade : {result.riskAmount.toFixed(2)} $</p>
-            <p>📏 Taille de position : {result.positionSize.toFixed(4)} unités</p>
-            <p>💰 Valeur position : {result.positionValue.toFixed(2)} $</p>
-            <p>📊 Levier conseillé : {result.leverage.toFixed(2)}x</p>
-            <p>📈 PNL potentiel : {result.pnl.toFixed(2)} $</p>
-            <p>🔁 R:R ratio : {result.rr.toFixed(2)} </p>
-            <p>🧮 Trades possibles en parallèle : {result.maxTrades}</p>
+          <div style={{ marginTop: 20 }}>
+            <p>Risk Amount: ${result.riskAmount.toFixed(2)}</p>
+            <p>Position Size: {result.positionSize.toFixed(2)}</p>
+            <p>Position Value: ${result.positionValue.toFixed(2)}</p>
+            <p>PNL: ${result.pnl.toFixed(2)}</p>
+            <p>Leverage: x{result.leverage.toFixed(2)}</p>
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 }
