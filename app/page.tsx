@@ -10,8 +10,9 @@ export default function Home() {
   const [stopLossPrice, setStopLossPrice] = useState(88000);
   const [positionType, setPositionType] = useState("long");
   const [maxMargin, setMaxMargin] = useState(100);
-  const [maxLeverage, setMaxLeverage] = useState(50); // Nouveau champ
+  const [maxLeverage, setMaxLeverage] = useState(50);
   const [result, setResult] = useState<any>(null);
+  const [isNightMode, setIsNightMode] = useState(false); // État pour gérer le mode nuit
 
   const addTargetPrice = () => {
     setTargetPrices([...targetPrices, { targetPrice: 0, percentage: 0 }]);
@@ -20,6 +21,11 @@ export default function Home() {
   const handleTargetPriceChange = (index: number, field: string, value: number) => {
     const updatedTargetPrices = [...targetPrices];
     updatedTargetPrices[index] = { ...updatedTargetPrices[index], [field]: value };
+    setTargetPrices(updatedTargetPrices);
+  };
+
+  const removeTargetPrice = (index: number) => {
+    const updatedTargetPrices = targetPrices.filter((_, i) => i !== index);
     setTargetPrices(updatedTargetPrices);
   };
 
@@ -36,7 +42,6 @@ export default function Home() {
     const positionSize = riskAmount / diff;
     const positionValue = positionSize * entry;
 
-    // Calcul du PnL global basé sur plusieurs TP
     let totalPnL = 0;
     let totalPercentage = 0;
     targetPrices.forEach((target) => {
@@ -49,13 +54,11 @@ export default function Home() {
       totalPercentage += target.percentage;
     });
 
-    // Calcul du levier
     let leverage = positionValue / maxMargin;
-    leverage = Math.min(Math.round(leverage), maxLeverage); // Cap sur le levier max autorisé
+    leverage = Math.min(Math.round(leverage), maxLeverage); 
 
-    const realMargin = positionValue / leverage; // Montant à investir sans levier
+    const realMargin = positionValue / leverage;
 
-    // Calcul du Risk-Reward ratio
     let rr = 0;
     targetPrices.forEach((target) => {
       const targetPrice = parseFloat(target.targetPrice.toString());
@@ -77,6 +80,10 @@ export default function Home() {
     });
   };
 
+  const toggleNightMode = () => {
+    setIsNightMode(!isNightMode); // Bascule entre le mode jour et le mode nuit
+  };
+
   return (
     <main
       style={{
@@ -84,7 +91,8 @@ export default function Home() {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
-        backgroundColor: "#f0f4f8",
+        backgroundColor: isNightMode ? "#121212" : "#f0f4f8", // Fond différent selon le mode
+        color: isNightMode ? "#ffffff" : "#000000", // Texte différent selon le mode
         fontFamily: "'Roboto', sans-serif",
         padding: 20,
       }}
@@ -93,10 +101,10 @@ export default function Home() {
         style={{
           maxWidth: 500,
           width: "100%",
-          backgroundColor: "#ffffff",
+          backgroundColor: isNightMode ? "#333" : "#ffffff", // Fond du bloc
           borderRadius: 12,
           padding: 30,
-          boxShadow: "0 10px 20px rgba(0, 0, 0, 0.1)",
+          boxShadow: isNightMode ? "0 10px 20px rgba(255, 255, 255, 0.1)" : "0 10px 20px rgba(0, 0, 0, 0.1)",
           transition: "all 0.3s ease-in-out",
           transform: result ? "scale(1.05)" : "scale(1)",
         }}
@@ -105,7 +113,7 @@ export default function Home() {
           style={{
             fontSize: 28,
             textAlign: "center",
-            color: "#333",
+            color: isNightMode ? "#ffffff" : "#333", // Couleur du titre
             marginBottom: 30,
             fontWeight: "bold",
             letterSpacing: "0.5px",
@@ -115,50 +123,66 @@ export default function Home() {
         </h1>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-          <label style={labelStyle}>Capital ($):</label>
+          <label style={{ ...labelStyle, color: isNightMode ? "#ffffff" : "#000000" }}>Capital ($):</label>
           <input
             type="number"
             value={capital}
             onChange={(e) => setCapital(Number(e.target.value))}
-            style={inputStyle}
+            style={inputStyle(isNightMode)}
           />
 
-          <label style={labelStyle}>Risque en (%):</label>
+          <label style={{ ...labelStyle, color: isNightMode ? "#ffffff" : "#000000" }}>Risque en (%):</label>
           <input
             type="number"
             value={risk}
             onChange={(e) => setRisk(Number(e.target.value))}
-            style={inputStyle}
+            style={inputStyle(isNightMode)}
           />
 
-          <label style={labelStyle}>Prix d'achat:</label>
+          <label style={{ ...labelStyle, color: isNightMode ? "#ffffff" : "#000000" }}>Prix d'achat:</label>
           <input
             type="number"
             value={entryPrice}
             onChange={(e) => setEntryPrice(Number(e.target.value))}
-            style={inputStyle}
+            style={inputStyle(isNightMode)}
           />
 
           {targetPrices.map((target, index) => (
             <div key={index} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <label style={labelStyle}>TP {index + 1} Prix:</label>
+              <label style={{ ...labelStyle, color: isNightMode ? "#ffffff" : "#000000" }}>TP {index + 1} Prix:</label>
               <input
                 type="number"
                 value={target.targetPrice}
                 onChange={(e) =>
                   handleTargetPriceChange(index, "targetPrice", Number(e.target.value))
                 }
-                style={inputStyle}
+                style={inputStyle(isNightMode)}
               />
-              <label style={labelStyle}>TP {index + 1} Pourcentage:</label>
+              <label style={{ ...labelStyle, color: isNightMode ? "#ffffff" : "#000000" }}>TP {index + 1} Pourcentage:</label>
               <input
                 type="number"
                 value={target.percentage}
                 onChange={(e) =>
                   handleTargetPriceChange(index, "percentage", Number(e.target.value))
                 }
-                style={inputStyle}
+                style={inputStyle(isNightMode)}
               />
+              <button
+                onClick={() => removeTargetPrice(index)}
+                style={{
+                  marginTop: 10,
+                  padding: "10px 20px",
+                  backgroundColor: "#f44336",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: 8,
+                  fontSize: 16,
+                  cursor: "pointer",
+                  transition: "all 0.3s ease-in-out",
+                }}
+              >
+                Supprimer ce TP
+              </button>
             </div>
           ))}
           <button
@@ -174,48 +198,42 @@ export default function Home() {
               cursor: "pointer",
               transition: "all 0.3s ease-in-out",
             }}
-            onMouseOver={(e) =>
-              (e.currentTarget.style.backgroundColor = "#45a049")
-            }
-            onMouseOut={(e) =>
-              (e.currentTarget.style.backgroundColor = "#4CAF50")
-            }
           >
             Ajouter un TP
           </button>
 
-          <label style={labelStyle}>SL:</label>
+          <label style={{ ...labelStyle, color: isNightMode ? "#ffffff" : "#000000" }}>SL:</label>
           <input
             type="number"
             value={stopLossPrice}
             onChange={(e) => setStopLossPrice(Number(e.target.value))}
-            style={inputStyle}
+            style={inputStyle(isNightMode)}
           />
 
-          <label style={labelStyle}>Type de position:</label>
+          <label style={{ ...labelStyle, color: isNightMode ? "#ffffff" : "#000000" }}>Type de position:</label>
           <select
             value={positionType}
             onChange={(e) => setPositionType(e.target.value)}
-            style={inputStyle}
+            style={inputStyle(isNightMode)}
           >
             <option value="long">Long</option>
             <option value="short">Short</option>
           </select>
 
-          <label style={labelStyle}>Marge maximale pour ce trade ($):</label>
+          <label style={{ ...labelStyle, color: isNightMode ? "#ffffff" : "#000000" }}>Marge maximale pour ce trade ($):</label>
           <input
             type="number"
             value={maxMargin}
             onChange={(e) => setMaxMargin(Number(e.target.value))}
-            style={inputStyle}
+            style={inputStyle(isNightMode)}
           />
 
-          <label style={labelStyle}>Levier maximal pour ce trade (x):</label>
+          <label style={{ ...labelStyle, color: isNightMode ? "#ffffff" : "#000000" }}>Levier maximal pour ce trade (x):</label>
           <input
             type="number"
             value={maxLeverage}
             onChange={(e) => setMaxLeverage(Number(e.target.value))}
-            style={inputStyle}
+            style={inputStyle(isNightMode)}
           />
 
           <button
@@ -231,12 +249,6 @@ export default function Home() {
               cursor: "pointer",
               transition: "all 0.3s ease-in-out",
             }}
-            onMouseOver={(e) =>
-              (e.currentTarget.style.backgroundColor = "#45a049")
-            }
-            onMouseOut={(e) =>
-              (e.currentTarget.style.backgroundColor = "#4CAF50")
-            }
           >
             Calculate
           </button>
@@ -246,9 +258,9 @@ export default function Home() {
               style={{
                 marginTop: 30,
                 padding: 20,
-                backgroundColor: "#f4f4f9",
+                backgroundColor: isNightMode ? "#333" : "#f4f4f9",
                 borderRadius: 8,
-                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                boxShadow: isNightMode ? "0 4px 8px rgba(255, 255, 255, 0.1)" : "0 4px 8px rgba(0, 0, 0, 0.1)",
               }}
             >
               <p style={resultTextStyle}>
@@ -275,24 +287,43 @@ export default function Home() {
             </div>
           )}
         </div>
+
+        {/* Bouton de mode nuit */}
+        <button
+          onClick={toggleNightMode}
+          style={{
+            marginTop: 20,
+            padding: "10px 20px",
+            backgroundColor: "#2196F3",
+            color: "#fff",
+            border: "none",
+            borderRadius: 8,
+            fontSize: 18,
+            cursor: "pointer",
+            transition: "all 0.3s ease-in-out",
+          }}
+        >
+          {isNightMode ? "Mode Jour" : "Mode Nuit"}
+        </button>
       </div>
     </main>
   );
 }
 
-const inputStyle = {
+const inputStyle = (isNightMode: boolean) => ({
   padding: "10px 15px",
   borderRadius: 8,
   border: "1px solid #ddd",
   fontSize: 16,
   outline: "none",
   transition: "border 0.3s ease-in-out",
-  color: "#000",
-};
+  color: isNightMode ? "#fff" : "#000",
+  backgroundColor: isNightMode ? "#121212" : "#fff",
+});
 
 const labelStyle = {
   fontSize: 16,
-  color: "#666",
+  fontWeight: "bold",
 };
 
 const resultTextStyle = {
