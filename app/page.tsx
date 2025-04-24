@@ -7,7 +7,7 @@ export default function Home() {
   const [capital, setCapital] = useState(1000);
   const [risk, setRisk] = useState(2);
   const [entryPrice, setEntryPrice] = useState(90000);
-  const [targetPrices, setTargetPrices] = useState([{ targetPrice: 94000, percentage: 50 }]);
+  const [targetPrices, setTargetPrices] = useState([{ targetPrice: 94000, percentage: 100 }]);
   const [stopLossPrice, setStopLossPrice] = useState(88000);
   const [positionType, setPositionType] = useState("long");
   const [maxMargin, setMaxMargin] = useState(100);
@@ -56,7 +56,7 @@ export default function Home() {
     });
 
     let leverage = positionValue / maxMargin;
-    leverage = Math.min(Math.round(leverage), maxLeverage); 
+    leverage = Math.min(Math.round(leverage), maxLeverage);
 
     const realMargin = positionValue / leverage;
 
@@ -167,7 +167,7 @@ export default function Home() {
             style={inputStyle(isNightMode)}
           />
 
-          <label style={{ ...labelStyle, color: isNightMode ? "#ffffff" : "#000000" }}>Levier maximal pour ce trade (x):</label>
+          <label style={{ ...labelStyle, color: isNightMode ? "#ffffff" : "#000000" }}>Levier maximal pour ce trade :</label>
           <input
             type="number"
             value={maxLeverage}
@@ -213,22 +213,26 @@ export default function Home() {
                 }
                 style={inputStyle(isNightMode)}
               />
-              <button
-                onClick={() => removeTargetPrice(index)}
-                style={{
-                  marginTop: 10,
-                  padding: "12px 20px",
-                  backgroundColor: "#f44336",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 8,
-                  fontSize: 16,
-                  cursor: "pointer",
-                  transition: "all 0.3s ease-in-out",
-                }}
-              >
-                Supprimer ce TP
-              </button>
+              
+              {/* Le bouton "Supprimer ce TP" s'affiche seulement si l'index est >= 1 */}
+              {index >= 1 && (
+                <button
+                  onClick={() => removeTargetPrice(index)}
+                  style={{
+                    marginTop: 10,
+                    padding: "12px 20px",
+                    backgroundColor: "#f44336",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: 8,
+                    fontSize: 16,
+                    cursor: "pointer",
+                    transition: "all 0.3s ease-in-out",
+                  }}
+                >
+                  Supprimer ce TP
+                </button>
+              )}
             </div>
           ))}
           <button
