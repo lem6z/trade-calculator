@@ -139,7 +139,7 @@ export default function Home() {
             letterSpacing: "0.5px",
           }}
         >
-          Trade Calculator
+          Trade Calculator by @0xLem_eth
         </h1>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -158,6 +158,32 @@ export default function Home() {
             onChange={(e) => setRisk(Number(e.target.value))}
             style={inputStyle(isNightMode)}
           />
+
+          <label style={{ ...labelStyle, color: isNightMode ? "#ffffff" : "#000000" }}>Marge maximale pour ce trade ($):</label>
+          <input
+            type="number"
+            value={maxMargin}
+            onChange={(e) => setMaxMargin(Number(e.target.value))}
+            style={inputStyle(isNightMode)}
+          />
+
+          <label style={{ ...labelStyle, color: isNightMode ? "#ffffff" : "#000000" }}>Levier maximal pour ce trade (x):</label>
+          <input
+            type="number"
+            value={maxLeverage}
+            onChange={(e) => setMaxLeverage(Number(e.target.value))}
+            style={inputStyle(isNightMode)}
+          />
+
+          <label style={{ ...labelStyle, color: isNightMode ? "#ffffff" : "#000000" }}>Type de position:</label>
+          <select
+            value={positionType}
+            onChange={(e) => setPositionType(e.target.value)}
+            style={inputStyle(isNightMode)}
+          >
+            <option value="long">Long</option>
+            <option value="short">Short</option>
+          </select>
 
           <label style={{ ...labelStyle, color: isNightMode ? "#ffffff" : "#000000" }}>Prix d'achat:</label>
           <input
@@ -227,32 +253,6 @@ export default function Home() {
             type="number"
             value={stopLossPrice}
             onChange={(e) => setStopLossPrice(Number(e.target.value))}
-            style={inputStyle(isNightMode)}
-          />
-
-          <label style={{ ...labelStyle, color: isNightMode ? "#ffffff" : "#000000" }}>Type de position:</label>
-          <select
-            value={positionType}
-            onChange={(e) => setPositionType(e.target.value)}
-            style={inputStyle(isNightMode)}
-          >
-            <option value="long">Long</option>
-            <option value="short">Short</option>
-          </select>
-
-          <label style={{ ...labelStyle, color: isNightMode ? "#ffffff" : "#000000" }}>Marge maximale pour ce trade ($):</label>
-          <input
-            type="number"
-            value={maxMargin}
-            onChange={(e) => setMaxMargin(Number(e.target.value))}
-            style={inputStyle(isNightMode)}
-          />
-
-          <label style={{ ...labelStyle, color: isNightMode ? "#ffffff" : "#000000" }}>Levier maximal pour ce trade (x):</label>
-          <input
-            type="number"
-            value={maxLeverage}
-            onChange={(e) => setMaxLeverage(Number(e.target.value))}
             style={inputStyle(isNightMode)}
           />
 
