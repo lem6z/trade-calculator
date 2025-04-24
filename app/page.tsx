@@ -179,7 +179,11 @@ export default function Home() {
           <select
             value={positionType}
             onChange={(e) => setPositionType(e.target.value)}
-            style={inputStyle(isNightMode)}
+            style={{
+              ...inputStyle(isNightMode),
+              backgroundColor: positionType === "long" ? "#28a745" : "#dc3545", // Ajout des couleurs spécifiques
+              color: "#fff",
+            }}
           >
             <option value="long">Long</option>
             <option value="short">Short</option>
@@ -213,8 +217,6 @@ export default function Home() {
                 }
                 style={inputStyle(isNightMode)}
               />
-              
-              {/* Le bouton "Supprimer ce TP" s'affiche seulement si l'index est >= 1 */}
               {index >= 1 && (
                 <button
                   onClick={() => removeTargetPrice(index)}
@@ -276,6 +278,13 @@ export default function Home() {
           >
             Calculer
           </button>
+
+          {/* Lien cliquable */}
+          <p style={{ marginTop: 20, textAlign: "center" }}>
+            <a href="https://www.x.com/0xlem_eth" target="_blank" style={{ color: isNightMode ? "#ffffff" : "#007bff" }}>
+              Twitter
+            </a>
+          </p>
 
           {result && (
             <div
