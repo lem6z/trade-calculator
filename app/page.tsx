@@ -9,7 +9,8 @@ export default function Home() {
   const [targetPrice, setTargetPrice] = useState(110);
   const [stopLossPrice, setStopLossPrice] = useState(95);
   const [positionType, setPositionType] = useState("long");
-  const [maxMargin, setMaxMargin] = useState(100); // Nouvelle variable pour la marge maximale
+  const [maxMargin, setMaxMargin] = useState(100);
+  const [maxLeverage, setMaxLeverage] = useState(50); // Nouveau champ
   const [result, setResult] = useState<any>(null);
 
   const calculate = () => {
@@ -30,12 +31,13 @@ export default function Home() {
         ? positionSize * (target - entry)
         : positionSize * (entry - target);
 
-    // Calcul du levier initial
-    let leverage = positionValue / maxMargin; // Utilisation de la marge maximale
-    leverage = Math.round(leverage); // Arrondi du levier à l'entier le plus proche
-    leverage = leverage > 100 ? 100 : leverage; // Limite du levier à 100 maximum
+    // Calcul du levier
+    let leverage = positionValue / maxMargin;
+    leverage = Math.min(Math.round(leverage), maxLeverage); // Cap sur le levier max autorisé
 
-    // Calcul du Risk-Reward ratio (RR)
+    const realMargin = positionValue / leverage; // Montant à investir sans levier
+
+    // Calcul du Risk-Reward ratio
     let rr = 0;
     if (positionType === "long") {
       rr = (target - entry) / (entry - stop);
@@ -49,7 +51,8 @@ export default function Home() {
       positionValue,
       pnl,
       leverage,
-      rr, // Ajout du RR dans les résultats
+      realMargin,
+      rr,
     });
   };
 
@@ -90,148 +93,71 @@ export default function Home() {
           Trade Calculator
         </h1>
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 20,
-          }}
-        >
-          <label style={{ fontSize: 16, color: "#666" }}>Capital ($):</label>
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          <label style={labelStyle}>Capital ($):</label>
           <input
             type="number"
             value={capital}
             onChange={(e) => setCapital(Number(e.target.value))}
-            style={{
-              padding: "10px 15px",
-              borderRadius: 8,
-              border: "1px solid #ddd",
-              fontSize: 16,
-              outline: "none",
-              transition: "border 0.3s ease-in-out",
-              color: "#000", // Texte en noir
-            }}
-            onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
-            onBlur={(e) => e.target.style.border = "1px solid #ddd"}
+            style={inputStyle}
           />
 
-          <label style={{ fontSize: 16, color: "#666" }}>Risk (%):</label>
+          <label style={labelStyle}>Risk (%):</label>
           <input
             type="number"
             value={risk}
             onChange={(e) => setRisk(Number(e.target.value))}
-            style={{
-              padding: "10px 15px",
-              borderRadius: 8,
-              border: "1px solid #ddd",
-              fontSize: 16,
-              outline: "none",
-              transition: "border 0.3s ease-in-out",
-              color: "#000", // Texte en noir
-            }}
-            onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
-            onBlur={(e) => e.target.style.border = "1px solid #ddd"}
+            style={inputStyle}
           />
 
-          <label style={{ fontSize: 16, color: "#666" }}>Entry Price:</label>
+          <label style={labelStyle}>Entry Price:</label>
           <input
             type="number"
             value={entryPrice}
             onChange={(e) => setEntryPrice(Number(e.target.value))}
-            style={{
-              padding: "10px 15px",
-              borderRadius: 8,
-              border: "1px solid #ddd",
-              fontSize: 16,
-              outline: "none",
-              transition: "border 0.3s ease-in-out",
-              color: "#000", // Texte en noir
-            }}
-            onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
-            onBlur={(e) => e.target.style.border = "1px solid #ddd"}
+            style={inputStyle}
           />
 
-          <label style={{ fontSize: 16, color: "#666" }}>Target Price:</label>
+          <label style={labelStyle}>Target Price:</label>
           <input
             type="number"
             value={targetPrice}
             onChange={(e) => setTargetPrice(Number(e.target.value))}
-            style={{
-              padding: "10px 15px",
-              borderRadius: 8,
-              border: "1px solid #ddd",
-              fontSize: 16,
-              outline: "none",
-              transition: "border 0.3s ease-in-out",
-              color: "#000", // Texte en noir
-            }}
-            onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
-            onBlur={(e) => e.target.style.border = "1px solid #ddd"}
+            style={inputStyle}
           />
 
-          <label style={{ fontSize: 16, color: "#666" }}>Stop Loss Price:</label>
+          <label style={labelStyle}>Stop Loss Price:</label>
           <input
             type="number"
             value={stopLossPrice}
             onChange={(e) => setStopLossPrice(Number(e.target.value))}
-            style={{
-              padding: "10px 15px",
-              borderRadius: 8,
-              border: "1px solid #ddd",
-              fontSize: 16,
-              outline: "none",
-              transition: "border 0.3s ease-in-out",
-              color: "#000", // Texte en noir
-            }}
-            onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
-            onBlur={(e) => e.target.style.border = "1px solid #ddd"}
+            style={inputStyle}
           />
 
-          <label style={{ fontSize: 16, color: "#666" }}>Position Type:</label>
+          <label style={labelStyle}>Position Type:</label>
           <select
             value={positionType}
             onChange={(e) => setPositionType(e.target.value)}
-            style={{
-              padding: "10px 15px",
-              borderRadius: 8,
-              border: "1px solid #ddd",
-              fontSize: 16,
-              outline: "none",
-              backgroundColor: "#fff",
-              transition: "border 0.3s ease-in-out",
-              color: "#000", // Texte en noir
-            }}
+            style={inputStyle}
           >
-            <option
-              value="long"
-              style={{ backgroundColor: "#4CAF50", color: "#000" }}
-            >
-              Long
-            </option>
-            <option
-              value="short"
-              style={{ backgroundColor: "#F44336", color: "#000" }}
-            >
-              Short
-            </option>
+            <option value="long">Long</option>
+            <option value="short">Short</option>
           </select>
 
-          <label style={{ fontSize: 16, color: "#666" }}>Max Margin ($):</label>
+          <label style={labelStyle}>Max Margin ($):</label>
           <input
             type="number"
             value={maxMargin}
             onChange={(e) => setMaxMargin(Number(e.target.value))}
-            style={{
-              padding: "10px 15px",
-              borderRadius: 8,
-              border: "1px solid #ddd",
-              fontSize: 16,
-              outline: "none",
-              transition: "border 0.3s ease-in-out",
-              color: "#000", // Texte en noir
-            }}
-            onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
-            onBlur={(e) => e.target.style.border = "1px solid #ddd"}
+            style={inputStyle}
+          />
+
+          <label style={labelStyle}>Max Leverage (x):</label>
+          <input
+            type="number"
+            value={maxLeverage}
+            onChange={(e) => setMaxLeverage(Number(e.target.value))}
+            style={inputStyle}
           />
 
           <button
@@ -247,8 +173,12 @@ export default function Home() {
               cursor: "pointer",
               transition: "all 0.3s ease-in-out",
             }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#45a049"}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#4CAF50"}
+            onMouseOver={(e) =>
+              (e.currentTarget.style.backgroundColor = "#45a049")
+            }
+            onMouseOut={(e) =>
+              (e.currentTarget.style.backgroundColor = "#4CAF50")
+            }
           >
             Calculate
           </button>
@@ -263,22 +193,25 @@ export default function Home() {
                 boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
               }}
             >
-              <p style={{ color: "#333", fontSize: 16 }}>
+              <p style={resultTextStyle}>
                 <strong>Risk Amount:</strong> ${result.riskAmount.toFixed(2)}
               </p>
-              <p style={{ color: "#333", fontSize: 16 }}>
+              <p style={resultTextStyle}>
                 <strong>Position Size:</strong> {result.positionSize.toFixed(2)}
               </p>
-              <p style={{ color: "#333", fontSize: 16 }}>
+              <p style={resultTextStyle}>
                 <strong>Position Value:</strong> ${result.positionValue.toFixed(2)}
               </p>
-              <p style={{ color: "#333", fontSize: 16 }}>
+              <p style={resultTextStyle}>
                 <strong>PNL:</strong> ${result.pnl.toFixed(2)}
               </p>
-              <p style={{ color: "#333", fontSize: 16 }}>
+              <p style={resultTextStyle}>
                 <strong>Leverage:</strong> x{result.leverage}
               </p>
-              <p style={{ color: "#333", fontSize: 16 }}>
+              <p style={resultTextStyle}>
+                <strong>Real Margin (Without Leverage):</strong> ${result.realMargin.toFixed(2)}
+              </p>
+              <p style={resultTextStyle}>
                 <strong>Risk-Reward Ratio (RR):</strong> {result.rr.toFixed(2)}
               </p>
             </div>
@@ -288,3 +221,23 @@ export default function Home() {
     </main>
   );
 }
+
+const inputStyle = {
+  padding: "10px 15px",
+  borderRadius: 8,
+  border: "1px solid #ddd",
+  fontSize: 16,
+  outline: "none",
+  transition: "border 0.3s ease-in-out",
+  color: "#000",
+};
+
+const labelStyle = {
+  fontSize: 16,
+  color: "#666",
+};
+
+const resultTextStyle = {
+  color: "#333",
+  fontSize: 16,
+};
