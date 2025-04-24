@@ -28,19 +28,18 @@ export default function Home() {
       positionType === "long"
         ? positionSize * (target - entry)
         : positionSize * (entry - target);
-    const leverage = positionValue / capital;
-
-    // Calcul du ratio Reward/Risk (RR)
-    const potentialProfit = positionType === "long" ? target - entry : entry - target;
-    const rr = potentialProfit / diff;
+    
+    // Calcul du levier
+    let leverage = positionValue / capital;
+    leverage = Math.round(leverage); // Arrondi du levier à l'entier le plus proche
+    leverage = leverage > 100 ? 100 : leverage; // Limite du levier à 100 maximum
 
     setResult({
       riskAmount,
       positionSize,
       positionValue,
       pnl,
-      leverage: leverage.toFixed(2), // Arrondi de l'effet de levier
-      rr: rr.toFixed(2), // Arrondi du RR
+      leverage,
     });
   };
 
@@ -100,7 +99,6 @@ export default function Home() {
               fontSize: 16,
               outline: "none",
               transition: "border 0.3s ease-in-out",
-              color: "#000", // Couleur du texte en noir
             }}
             onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
             onBlur={(e) => e.target.style.border = "1px solid #ddd"}
@@ -118,7 +116,6 @@ export default function Home() {
               fontSize: 16,
               outline: "none",
               transition: "border 0.3s ease-in-out",
-              color: "#000", // Couleur du texte en noir
             }}
             onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
             onBlur={(e) => e.target.style.border = "1px solid #ddd"}
@@ -136,7 +133,6 @@ export default function Home() {
               fontSize: 16,
               outline: "none",
               transition: "border 0.3s ease-in-out",
-              color: "#000", // Couleur du texte en noir
             }}
             onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
             onBlur={(e) => e.target.style.border = "1px solid #ddd"}
@@ -154,7 +150,6 @@ export default function Home() {
               fontSize: 16,
               outline: "none",
               transition: "border 0.3s ease-in-out",
-              color: "#000", // Couleur du texte en noir
             }}
             onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
             onBlur={(e) => e.target.style.border = "1px solid #ddd"}
@@ -172,7 +167,6 @@ export default function Home() {
               fontSize: 16,
               outline: "none",
               transition: "border 0.3s ease-in-out",
-              color: "#000", // Couleur du texte en noir
             }}
             onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
             onBlur={(e) => e.target.style.border = "1px solid #ddd"}
@@ -192,8 +186,18 @@ export default function Home() {
               transition: "border 0.3s ease-in-out",
             }}
           >
-            <option value="long">Long</option>
-            <option value="short">Short</option>
+            <option
+              value="long"
+              style={{ backgroundColor: "#4CAF50", color: "#fff" }}
+            >
+              Long
+            </option>
+            <option
+              value="short"
+              style={{ backgroundColor: "#F44336", color: "#fff" }}
+            >
+              Short
+            </option>
           </select>
 
           <button
@@ -239,9 +243,6 @@ export default function Home() {
               </p>
               <p style={{ color: "#333", fontSize: 16 }}>
                 <strong>Leverage:</strong> x{result.leverage}
-              </p>
-              <p style={{ color: "#333", fontSize: 16 }}>
-                <strong>Risk/Reward Ratio:</strong> {result.rr}
               </p>
             </div>
           )}
