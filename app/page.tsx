@@ -96,8 +96,27 @@ export default function Home() {
         color: isNightMode ? "#ffffff" : "#000000", // Texte différent selon le mode
         fontFamily: "'Roboto', sans-serif",
         padding: 20,
+        position: "relative", // Permet de positionner le bouton en haut à droite
       }}
     >
+      {/* Bouton pour basculer le mode */}
+      <button
+        onClick={toggleNightMode}
+        style={{
+          position: "absolute",
+          top: 20,
+          right: 20,
+          backgroundColor: "transparent",
+          border: "none",
+          cursor: "pointer",
+          fontSize: 30,
+          color: isNightMode ? "#fff" : "#000",
+          transition: "all 0.3s ease-in-out",
+        }}
+      >
+        {isNightMode ? <FaSun /> : <FaMoon />}
+      </button>
+
       <div
         style={{
           maxWidth: 500,
@@ -108,27 +127,8 @@ export default function Home() {
           boxShadow: isNightMode ? "0 10px 20px rgba(255, 255, 255, 0.1)" : "0 10px 20px rgba(0, 0, 0, 0.1)",
           transition: "all 0.3s ease-in-out",
           transform: result ? "scale(1.05)" : "scale(1)",
-          position: "relative", // Pour le bouton de bascule
         }}
       >
-        {/* Bouton pour basculer le mode */}
-        <button
-          onClick={toggleNightMode}
-          style={{
-            position: "absolute",
-            top: 20,
-            right: 20,
-            backgroundColor: "transparent",
-            border: "none",
-            cursor: "pointer",
-            fontSize: 30,
-            color: isNightMode ? "#fff" : "#000",
-            transition: "all 0.3s ease-in-out",
-          }}
-        >
-          {isNightMode ? <FaSun /> : <FaMoon />}
-        </button>
-
         <h1
           style={{
             fontSize: 28,
@@ -186,7 +186,11 @@ export default function Home() {
           <select
             value={positionType}
             onChange={(e) => setPositionType(e.target.value)}
-            style={inputStyle(isNightMode)}
+            style={{
+              ...inputStyle(isNightMode),
+              color: positionType === "long" ? "green" : "red", // Ajout de couleur selon le choix
+              fontWeight: "bold", // Pour bien mettre en évidence
+            }}
           >
             <option value="long" style={{ color: "green" }}>Long</option>
             <option value="short" style={{ color: "red" }}>Short</option>
