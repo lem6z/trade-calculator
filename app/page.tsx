@@ -9,6 +9,7 @@ export default function Home() {
   const [targetPrice, setTargetPrice] = useState(110);
   const [stopLossPrice, setStopLossPrice] = useState(95);
   const [positionType, setPositionType] = useState("long");
+  const [maxMargin, setMaxMargin] = useState(100); // Nouvelle variable pour la marge maximale
   const [result, setResult] = useState<any>(null);
 
   const calculate = () => {
@@ -28,11 +29,19 @@ export default function Home() {
       positionType === "long"
         ? positionSize * (target - entry)
         : positionSize * (entry - target);
-    
-    // Calcul du levier
-    let leverage = positionValue / capital;
+
+    // Calcul du levier initial
+    let leverage = positionValue / maxMargin; // Utilisation de la marge maximale
     leverage = Math.round(leverage); // Arrondi du levier à l'entier le plus proche
     leverage = leverage > 100 ? 100 : leverage; // Limite du levier à 100 maximum
+
+    // Calcul du Risk-Reward ratio (RR)
+    let rr = 0;
+    if (positionType === "long") {
+      rr = (target - entry) / (entry - stop);
+    } else {
+      rr = (entry - target) / (stop - entry);
+    }
 
     setResult({
       riskAmount,
@@ -40,6 +49,7 @@ export default function Home() {
       positionValue,
       pnl,
       leverage,
+      rr, // Ajout du RR dans les résultats
     });
   };
 
@@ -188,17 +198,34 @@ export default function Home() {
           >
             <option
               value="long"
-              style={{ backgroundColor: "#4CAF50", color: "#fff" }}
+              style={{ backgroundColor: "#4CAF50", color: "#000" }}
             >
               Long
             </option>
             <option
               value="short"
-              style={{ backgroundColor: "#F44336", color: "#fff" }}
+              style={{ backgroundColor: "#F44336", color: "#000" }}
             >
               Short
             </option>
           </select>
+
+          <label style={{ fontSize: 16, color: "#666" }}>Max Margin ($):</label>
+          <input
+            type="number"
+            value={maxMargin}
+            onChange={(e) => setMaxMargin(Number(e.target.value))}
+            style={{
+              padding: "10px 15px",
+              borderRadius: 8,
+              border: "1px solid #ddd",
+              fontSize: 16,
+              outline: "none",
+              transition: "border 0.3s ease-in-out",
+            }}
+            onFocus={(e) => e.target.style.border = "1px solid #4CAF50"}
+            onBlur={(e) => e.target.style.border = "1px solid #ddd"}
+          />
 
           <button
             onClick={calculate}
@@ -243,6 +270,9 @@ export default function Home() {
               </p>
               <p style={{ color: "#333", fontSize: 16 }}>
                 <strong>Leverage:</strong> x{result.leverage}
+              </p>
+              <p style={{ color: "#333", fontSize: 16 }}>
+                <strong>Risk-Reward Ratio (RR):</strong> {result.rr.toFixed(2)}
               </p>
             </div>
           )}
