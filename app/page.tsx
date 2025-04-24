@@ -4,19 +4,28 @@ import { useState } from "react";
 
 export default function Home() {
   const [capital, setCapital] = useState(1000);
-  const [risk, setRisk] = useState(1);
-  const [entryPrice, setEntryPrice] = useState(100);
-  const [targetPrice, setTargetPrice] = useState(110);
-  const [stopLossPrice, setStopLossPrice] = useState(95);
+  const [risk, setRisk] = useState(2);
+  const [entryPrice, setEntryPrice] = useState(90000);
+  const [targetPrices, setTargetPrices] = useState([{ targetPrice: 94000, percentage: 50 }]);
+  const [stopLossPrice, setStopLossPrice] = useState(88000);
   const [positionType, setPositionType] = useState("long");
   const [maxMargin, setMaxMargin] = useState(100);
   const [maxLeverage, setMaxLeverage] = useState(50); // Nouveau champ
   const [result, setResult] = useState<any>(null);
 
+  const addTargetPrice = () => {
+    setTargetPrices([...targetPrices, { targetPrice: 0, percentage: 0 }]);
+  };
+
+  const handleTargetPriceChange = (index: number, field: string, value: number) => {
+    const updatedTargetPrices = [...targetPrices];
+    updatedTargetPrices[index] = { ...updatedTargetPrices[index], [field]: value };
+    setTargetPrices(updatedTargetPrices);
+  };
+
   const calculate = () => {
     const riskAmount = (capital * risk) / 100;
     const entry = parseFloat(entryPrice.toString());
-    const target = parseFloat(targetPrice.toString());
     const stop = parseFloat(stopLossPrice.toString());
 
     const diff =
@@ -26,10 +35,19 @@ export default function Home() {
 
     const positionSize = riskAmount / diff;
     const positionValue = positionSize * entry;
-    const pnl =
-      positionType === "long"
-        ? positionSize * (target - entry)
-        : positionSize * (entry - target);
+
+    // Calcul du PnL global basé sur plusieurs TP
+    let totalPnL = 0;
+    let totalPercentage = 0;
+    targetPrices.forEach((target) => {
+      const targetPrice = parseFloat(target.targetPrice.toString());
+      const pnl =
+        positionType === "long"
+          ? positionSize * (targetPrice - entry)
+          : positionSize * (entry - targetPrice);
+      totalPnL += pnl * (target.percentage / 100);
+      totalPercentage += target.percentage;
+    });
 
     // Calcul du levier
     let leverage = positionValue / maxMargin;
@@ -39,17 +57,20 @@ export default function Home() {
 
     // Calcul du Risk-Reward ratio
     let rr = 0;
-    if (positionType === "long") {
-      rr = (target - entry) / (entry - stop);
-    } else {
-      rr = (entry - target) / (stop - entry);
-    }
+    targetPrices.forEach((target) => {
+      const targetPrice = parseFloat(target.targetPrice.toString());
+      const rrPartial =
+        positionType === "long"
+          ? (targetPrice - entry) / (entry - stop)
+          : (entry - targetPrice) / (stop - entry);
+      rr += rrPartial * (target.percentage / 100);
+    });
 
     setResult({
       riskAmount,
       positionSize,
       positionValue,
-      pnl,
+      pnl: totalPnL,
       leverage,
       realMargin,
       rr,
@@ -102,7 +123,7 @@ export default function Home() {
             style={inputStyle}
           />
 
-          <label style={labelStyle}>Risk (%):</label>
+          <label style={labelStyle}>Risque en (%):</label>
           <input
             type="number"
             value={risk}
@@ -110,7 +131,7 @@ export default function Home() {
             style={inputStyle}
           />
 
-          <label style={labelStyle}>Entry Price:</label>
+          <label style={labelStyle}>Prix d'achat:</label>
           <input
             type="number"
             value={entryPrice}
@@ -118,15 +139,52 @@ export default function Home() {
             style={inputStyle}
           />
 
-          <label style={labelStyle}>Target Price:</label>
-          <input
-            type="number"
-            value={targetPrice}
-            onChange={(e) => setTargetPrice(Number(e.target.value))}
-            style={inputStyle}
-          />
+          {targetPrices.map((target, index) => (
+            <div key={index} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <label style={labelStyle}>TP {index + 1} Prix:</label>
+              <input
+                type="number"
+                value={target.targetPrice}
+                onChange={(e) =>
+                  handleTargetPriceChange(index, "targetPrice", Number(e.target.value))
+                }
+                style={inputStyle}
+              />
+              <label style={labelStyle}>TP {index + 1} Pourcentage:</label>
+              <input
+                type="number"
+                value={target.percentage}
+                onChange={(e) =>
+                  handleTargetPriceChange(index, "percentage", Number(e.target.value))
+                }
+                style={inputStyle}
+              />
+            </div>
+          ))}
+          <button
+            onClick={addTargetPrice}
+            style={{
+              marginTop: 20,
+              padding: "12px 20px",
+              backgroundColor: "#4CAF50",
+              color: "#fff",
+              border: "none",
+              borderRadius: 8,
+              fontSize: 18,
+              cursor: "pointer",
+              transition: "all 0.3s ease-in-out",
+            }}
+            onMouseOver={(e) =>
+              (e.currentTarget.style.backgroundColor = "#45a049")
+            }
+            onMouseOut={(e) =>
+              (e.currentTarget.style.backgroundColor = "#4CAF50")
+            }
+          >
+            Ajouter un TP
+          </button>
 
-          <label style={labelStyle}>Stop Loss Price:</label>
+          <label style={labelStyle}>SL:</label>
           <input
             type="number"
             value={stopLossPrice}
@@ -134,7 +192,7 @@ export default function Home() {
             style={inputStyle}
           />
 
-          <label style={labelStyle}>Position Type:</label>
+          <label style={labelStyle}>Type de position:</label>
           <select
             value={positionType}
             onChange={(e) => setPositionType(e.target.value)}
@@ -144,7 +202,7 @@ export default function Home() {
             <option value="short">Short</option>
           </select>
 
-          <label style={labelStyle}>Max Margin ($):</label>
+          <label style={labelStyle}>Marge maximale pour ce trade ($):</label>
           <input
             type="number"
             value={maxMargin}
@@ -152,7 +210,7 @@ export default function Home() {
             style={inputStyle}
           />
 
-          <label style={labelStyle}>Max Leverage (x):</label>
+          <label style={labelStyle}>Levier maximal pour ce trade (x):</label>
           <input
             type="number"
             value={maxLeverage}
